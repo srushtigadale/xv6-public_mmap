@@ -1,0 +1,83 @@
+diff --git a/Makefile b/Makefile
+index 09d790c..a76f857 100644
+--- a/Makefile
++++ b/Makefile
+@@ -181,6 +181,7 @@ UPROGS=\
+ 	_usertests\
+ 	_wc\
+ 	_zombie\
++	_trymmap\
+ 
+ fs.img: mkfs README $(UPROGS)
+ 	./mkfs fs.img README $(UPROGS)
+diff --git a/syscall.c b/syscall.c
+index ee85261..05bb641 100644
+--- a/syscall.c
++++ b/syscall.c
+@@ -103,6 +103,8 @@ extern int sys_unlink(void);
+ extern int sys_wait(void);
+ extern int sys_write(void);
+ extern int sys_uptime(void);
++extern int sys_mmap(void);
++extern int sys_munmap(void);
+ 
+ static int (*syscalls[])(void) = {
+ [SYS_fork]    sys_fork,
+@@ -126,6 +128,8 @@ static int (*syscalls[])(void) = {
+ [SYS_link]    sys_link,
+ [SYS_mkdir]   sys_mkdir,
+ [SYS_close]   sys_close,
++[SYS_mmap]    sys_mmap,
++[SYS_munmap]  sys_munmap,
+ };
+ 
+ void
+diff --git a/syscall.h b/syscall.h
+index bc5f356..e7b18d6 100644
+--- a/syscall.h
++++ b/syscall.h
+@@ -20,3 +20,5 @@
+ #define SYS_link   19
+ #define SYS_mkdir  20
+ #define SYS_close  21
++#define SYS_mmap   22
++#define SYS_munmap 23
+diff --git a/sysfile.c b/sysfile.c
+index bfe61b7..83bd310 100644
+--- a/sysfile.c
++++ b/sysfile.c
+@@ -442,3 +442,11 @@ sys_pipe(void)
+   fd[1] = fd1;
+   return 0;
+ }
++
++void sys_mmap(void) {
++  cprintf("mmap\n");
++}
++
++void sys_munmap(void) {
++  cprintf("munmap\n");
++}
+diff --git a/user.h b/user.h
+index 4f99c52..be6a936 100644
+--- a/user.h
++++ b/user.h
+@@ -23,6 +23,8 @@ int getpid(void);
+ char* sbrk(int);
+ int sleep(int);
+ int uptime(void);
++void mmap(void);
++void munmap(void);
+ 
+ // ulib.c
+ int stat(const char*, struct stat*);
+diff --git a/usys.S b/usys.S
+index 8bfd8a1..9ac03b2 100644
+--- a/usys.S
++++ b/usys.S
+@@ -29,3 +29,5 @@ SYSCALL(getpid)
+ SYSCALL(sbrk)
+ SYSCALL(sleep)
+ SYSCALL(uptime)
++SYSCALL(mmap)
++SYSCALL(munmap)

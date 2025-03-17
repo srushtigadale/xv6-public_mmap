@@ -15,6 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "mmap.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -441,4 +442,54 @@ sys_pipe(void)
   fd[0] = fd0;
   fd[1] = fd1;
   return 0;
+}
+
+void* sys_mmap(void) {
+  // void *mmap(void addr[.length], size_t length, int prot, int flags,
+  //   int fd, off_t offset);
+  struct proc *p = myproc(); 
+    if (p->total_mmaps >= 15) {
+        return (void*) -1; // mapping limit reached..
+    }
+
+  void* addr;
+  int len ,prot,flags,offset,fd;
+  if (argint(0, (int *)&addr) < 0 || argint(1, &len) < 0 || argint(2, &prot) < 0 || argint(3, &flags) < 0 || argint(4, &fd) < 0 ||argint(5, &offset) < 0 ) {
+    return (void *) -1;
+  }
+
+  cprintf("address : %p\n",addr);
+  cprintf("len : %d\n",len);
+  cprintf("protection : %d\n", prot);
+  cprintf("flags : %d\n",flags);
+  cprintf("file descriptor : %d\n",fd);
+  cprintf("offset : %d\n",offset);
+  cprintf("mmap\n");
+
+  //put all this is mmap data
+
+  // mmapdata *newmapping;
+  // newmapping->addr = addr;
+  // newmapping->length = len;
+  // newmapping->prot = prot;
+  // newmapping->flags = flags;
+  // newmapping->offset = offset;
+  // newmapping->fd = fd;
+
+  //but how to make this permanent, newmapping is a tempvar!
+  //proc chya allmaps chi next entry
+  p->allmmaps[p->total_mmaps].addr = addr;
+  p->allmmaps[p->total_mmaps].length = len;
+  p->allmmaps[p->total_mmaps].prot = prot;
+  p->allmmaps[p->total_mmaps].flags = flags;
+  p->allmmaps[p->total_mmaps].offset = offset;
+  p->allmmaps[p->total_mmaps].fd = fd;
+
+  
+
+  return (void*) 0;
+}
+
+void sys_munmap(void) {
+  cprintf("munmap\n");
 }
