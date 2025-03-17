@@ -15,7 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-#include "mmap.h"
+// #include "mmap.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -468,7 +468,7 @@ void* sys_mmap(void) {
 
   //put all this is mmap data
 
-  // mmapdata *newmapping;
+  // struct mmapdata *newmapping;
   // newmapping->addr = addr;
   // newmapping->length = len;
   // newmapping->prot = prot;
@@ -483,9 +483,7 @@ void* sys_mmap(void) {
   p->allmmaps[p->total_mmaps].prot = prot;
   p->allmmaps[p->total_mmaps].flags = flags;
   p->allmmaps[p->total_mmaps].offset = offset;
-  p->allmmaps[p->total_mmaps].fd = fd;
-
-  
+  p->allmmaps[p->total_mmaps].fd = fd;  
 
   return (void*) 0;
 }

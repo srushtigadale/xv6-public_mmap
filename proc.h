@@ -53,7 +53,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  mmapdata allmmaps[15]; // List of allocated mmap regions
+  struct mmapdata allmmaps[15]; // List of allocated mmap regions
   int total_mmaps;              // Total memory mappings
 };
 

@@ -33,7 +33,8 @@
 // prot = PROT_READ | PROT_WRITE = 0x3
 // flags = MAP_ANON | MAP_SHARED = 0x21
 // These are just integer bitmasks, not arrays.
-typedef struct mmap
+
+struct mmapdata
 {
     void *addr;   
     int length;   
@@ -41,5 +42,4 @@ typedef struct mmap
     int flags;    
     int fd;      
     int offset;
-
-}mmapdata;
+};
